@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>교육·연구 프로그램 운영실적 보고서</title>
+  <style>
+    :root {
+      --bg-page: #F4F6F9;
+      --paper: #FFFFFF;
+      --text: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --border-dark: #CBD5E1;
+      --accent: #1E40AF;
+      --accent-light: #EFF6FF;
+      --accent-hover: #1D4ED8;
+      --success-bg: #ECFDF5;
+      --success-border: #A7F3D0;
+      --success-text: #065F46;
+      --font-family: Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 32px 16px;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 상단 조작 영역 (화면에서만 보이고 인쇄 시 제외) */
+    .control-panel {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .control-title h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .control-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .control-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: #FFFFFF;
+      color: var(--text);
+      border-color: var(--border-dark);
+    }
+
+    .btn-secondary:hover {
+      background-color: #F8FAFC;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border-dark);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background-color: #FAFAFC;
+      transition: all 0.2s ease;
+      margin-bottom: 20px;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background-color: var(--accent-light);
+    }
+
+    .drop-zone-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .drop-zone-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .control-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .select-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .select-group select {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      background-color: #FFFFFF;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    /* 종이 문서 형태 보고서 본문 */
+    .report-paper {
+      background: var(--paper);
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 60px 64px;
+      min-height: 1050px;
+    }
+
+    .report-header {
+      margin-bottom: 36px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--text);
+    }
+
+    .report-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      outline: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .report-title:focus {
+      background-color: var(--accent-light);
+    }
+
+    .report-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 15px;
+      background-color: var(--accent);
+      border-radius: 2px;
+    }
+
+    .report-section {
+      margin-bottom: 38px;
+    }
+
+    /* 1. 요약 KPI 카드 */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .kpi-card {
+      background: #FAFAFC;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .kpi-card .kpi-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-card .kpi-val em {
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+
+    .kpi-card .sub-val {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* 2. 집계표 */
+    .table-wrapper {
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background-color: #F8FAFC;
+      color: var(--text);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-dark);
+      text-align: center;
+    }
+
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: 700; }
+    .text-accent { color: var(--accent); }
+
+    .table-total-row {
+      background-color: #F1F5F9;
+      border-top: 2px solid var(--border-dark);
+    }
+
+    .table-total-row td {
+      border-bottom: none;
+      padding: 11px 14px;
+    }
+
+    /* 3. 자동 종합 소견 */
+    .opinion-box {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+      background-color: #FAFAFC;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .opinion-box:focus {
+      outline: 2px solid var(--accent);
+      background-color: #FFFFFF;
+    }
+
+    /* 검증 결과 패널 */
+    .verify-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      margin-top: 16px;
+    }
+
+    .verify-pass {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+    }
+
+    .verify-fail {
+      background-color: #FEF2F2;
+      border-color: #FECACA;
+      color: #991B1B;
+    }
+
+    .verify-icon {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* 인쇄 및 PDF 미디어 쿼리 */
+    @media print {
+      body {
+        background-color: #FFFFFF !important;
+        padding: 0 !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+      }
+
+      .control-panel,
+      .no-print,
+      #verificationBadge {
+        display: none !important;
+      }
+
+      .report-paper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 10mm 15mm !important;
+        min-height: auto !important;
+      }
+
+      .opinion-box {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        resize: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 상단 조작 영역 (화면 전용) -->
+    <div class="control-panel no-print" id="control-panel">
+      <div class="control-header">
+        <div class="control-title">
+          <h2>보고서 자동 작성기</h2>
+          <p>교육·연구 프로그램 운영실적 CSV 파일을 불러와 자동 집계 및 공식 보고서를 생성합니다.</p>
+        </div>
+        <div class="control-actions">
+          <button type="button" class="btn btn-secondary" id="resetBtn">예시 데이터 초기화</button>
+          <button type="button" class="btn btn-primary" id="printBtn">인쇄 / PDF 저장</button>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-text">CSV 파일을 여기로 끌어다 놓거나 클릭하여 선택하세요</div>
+        <div class="drop-zone-sub">UTF-8 및 엑셀(EUC-KR) 인코딩 자동 지원 (열: 운영일, 프로그램명, 대상, 운영부서, 참여인원, 수료인원, 교육시간, 집행비용)</div>
+        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+      </div>
+
+      <div class="control-bar">
+        <div class="select-group">
+          <label for="groupBySelect">묶을 기준:</label>
+          <select id="groupBySelect">
+            <option value="운영부서">운영부서</option>
+            <option value="대상">대상</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 보고서 본문 (A4 규격 종이 문서 느낌) -->
+    <div class="report-paper">
+      <div class="report-header">
+        <h1 class="report-title" contenteditable="true" spellcheck="false">2026년 하반기 교육·연구 프로그램 운영실적 보고서</h1>
+        <div class="report-meta" id="docMeta">자료: 내장 예시 데이터 (25건) · 총 25건 · 작성일 2026-10-25</div>
+      </div>
+
+      <!-- 1. 핵심 요약 -->
+      <div class="report-section">
+        <h2 class="section-title">1. 핵심 성과 요약</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">총 운영 프로그램</div>
+            <div class="kpi-val" id="kpiTotalCount">25건</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">총 참여인원 (수료율)</div>
+            <div class="kpi-val" id="kpiParticipants">900<em>명</em></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">총 교육시간</div>
+            <div class="kpi-val" id="kpiHours">238<em>시간</em></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">총 집행비용</div>
+            <div class="kpi-val" id="kpiCost">72,500,000원</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 기준별 집계표 -->
+      <div class="report-section">
+        <h2 class="section-title" id="groupSectionTitle">2. 운영부서별 세부 집계표</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 48px;">No</th>
+                <th id="groupColHeader" class="text-left">운영부서</th>
+                <th class="text-right" style="width: 80px;">건수</th>
+                <th class="text-right" style="width: 100px;">참여인원</th>
+                <th class="text-right" style="width: 100px;">수료인원</th>
+                <th class="text-right" style="width: 90px;">교육시간</th>
+                <th class="text-right" style="width: 140px;">집행비용</th>
+                <th class="text-right" style="width: 80px;">비중(%)</th>
+              </tr>
+            </thead>
+            <tbody id="groupTableBody">
+              <!-- JS 동적 렌더링 -->
+            </tbody>
+            <tfoot id="groupTableFoot">
+              <!-- JS 동적 합계 행 -->
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. 종합 소견 -->
+      <div class="report-section">
+        <h2 class="section-title">3. 종합 분석 및 소견</h2>
+        <textarea class="opinion-box" id="opinionText" rows="4"></textarea>
+      </div>
+
+      <!-- 자동 검산 결과 (화면 하단 표시) -->
+      <div id="verificationBadge" class="verify-status verify-pass no-print">
+        <!-- JS 동적 검산 상태 -->
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
